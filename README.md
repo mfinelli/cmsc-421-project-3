@@ -121,7 +121,7 @@ immediately after the let goes out of scope).
 Notes and hints
 ---------------
 
-Depth-first search is prohibitively expensive. Really. You are likely going to
+Breadth-first search is prohibitively expensive. Really. You are likely going to
 need some kind of search heuristic. Since optimality is not required, this
 heuristic doesn't need to be admissible.
 
