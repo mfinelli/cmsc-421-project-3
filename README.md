@@ -121,7 +121,7 @@ immediately after the let goes out of scope).
 Notes and hints
 ---------------
 
-Depth-first search is prohibitely expensive. Really. You are likely going to
+Depth-first search is prohibitively expensive. Really. You are likely going to
 need some kind of search heuristic. Since optimality is not required, this
 heuristic doesn't need to be admissible.
 
@@ -129,6 +129,11 @@ You will probably want helper functions that generate the next set of legal
 moves. The logic for determining if a state satisfies the necessary
 preconditions is embedded into the definitions of pickup and puton.
 
-*Test* your program. We will provide some initial states and goals. You should
-write more of your own.
+Clojure's data structures are all persistent! When you apply an operator, it
+returns the state resulting from performing that action, but if you've kept
+a reference to the original state, you get to keep it for free. Use this to
+your advantage.
+
+*Test* your program. We will provide some initial states and goals (that we'd
+expect your find-plan to be able to solve). You should write more of your own.
 
