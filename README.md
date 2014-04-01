@@ -2,7 +2,7 @@ Project 3
 =========
 
 Blocks world is a world with a table, blocks that can be stacked on top of each
-other, an arm that can pick-up or put-down blocks (one at a time) and *nothing* 
+other, an arm that can pickup or put-down blocks (one at a time) and *nothing* 
 else.
 
 (Lest you think this problem is completely contrived, note that container 
@@ -69,6 +69,9 @@ result in a state that satisfies the goal. e.g.
                '(pickup :c) '(puton :b)]))
     (def bad-plan ['(pickup :a) '(puton :table)]) 
 
+    user=> start
+    {:pos {:a :b, :c :table, :b :c}, :holding nil, :clear #{:a}}
+
     user=> (apply-plan start plan)
     {:pos {:a :table, :c :b, :b :table}, :holding nil, :clear #{:a :c}}
     
@@ -90,9 +93,42 @@ http://clojuredocs.org/clojure_core/clojure.core/-%3E
 Assignment
 ----------
 
+Write the function (find-plan start goal) that returns a plan (i.e. vector of
+operators) such that:
+
+    (let [some-plan (find-plan start goal)]
+      (goal-reached (apply-plan start some-plan) goal)
+
+is true. i.e. find-plan should return a plan that reaches the goal.
+
+We do *not* require that the plan returned be *optimal* (i.e. as short as
+possible), but it should be within an order of magnitude or so.
+As a rule of thumb, don't worry too much about optimizing plan length; your
+primary concern should be in making sure that the plan is correct.
+
+*If your (find-plan) takes longer than 30 seconds to run, the release tests
+will time-out.* (For reference, I'm running these on an Intel i7 @ 2.30 GHz.)
+Therefore, when testing, make sure your (find-plan) terminates *well* within
+that limit. No points for find-plan's that time-out or blow out the JVM's 
+memory (per release test, i.e. if your find-plan times-out on only one test, 
+then you only lose the points for that test).
+
+A note on memory: an datastructure bound to a var via (def) will *not* be 
+garbage collected, unless that var is rebound using another def. Don't
+use (def) for local vars; that's what (let) is for (garbage can be collected
+immediately after the let goes out of scope).
 
 Notes and hints
 ---------------
 
-...
+Depth-first search is prohibitely expensive. Really. You are likely going to
+need some kind of search heuristic. Since optimality is not required, this
+heuristic doesn't need to be admissible.
+
+You will probably want helper functions that generate the next set of legal
+moves. The logic for determining if a state satisfies the necessary
+preconditions is embedded into the definitions of pickup and puton.
+
+*Test* your program. We will provide some initial states and goals. You should
+write more of your own.
 

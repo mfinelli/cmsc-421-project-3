@@ -8,7 +8,7 @@
 ;;  :c :e
 ;; :table
 ;; 
-(def sample {:a :b, :b :c, :c :table, :d :e, :e :table})
+;; (def sample {:a :b, :b :c, :c :table, :d :e, :e :table})
 
 (defn init
   "Returns an appropriate initial state as specified by pos.
@@ -71,5 +71,4 @@
    the equivalent of (puton (pickup state :a) :table)."
   [state actions]
   (eval (concat `(-> ~state) actions)))
-
 
