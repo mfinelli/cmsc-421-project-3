@@ -93,13 +93,16 @@ http://clojuredocs.org/clojure_core/clojure.core/-%3E
 Assignment
 ----------
 
-Write the function (find-plan start goal) that returns a plan (i.e. vector of
+Write the function (find-plan start-pos goal) that returns a plan (i.e. vector of
 operators) such that:
 
-    (let [some-plan (find-plan start goal)]
+    (let [start (init start-pos)
+          some-plan (find-plan start goal)]
       (goal-reached (apply-plan start some-plan) goal)
 
-is true. i.e. find-plan should return a plan that reaches the goal.
+is true. i.e. find-plan should return a plan that reaches the goal. Note that
+find-plan is being passed an initial position map, not an entire state. (i.e.
+just the :pos part of a state)
 
 We do *not* require that the plan returned be *optimal* (i.e. as short as
 possible), but it should be within an order of magnitude or so.
@@ -117,6 +120,12 @@ A note on memory: an datastructure bound to a var via (def) will *not* be
 garbage collected, unless that var is rebound using another def. Don't
 use (def) for local vars; that's what (let) is for (garbage can be collected
 immediately after the let goes out of scope).
+
+Submission
+----------
+
+Name your file lastname_firstname_project3.clj and submit it (and only it)
+to the submit server. (And don't wrap it in folder; makes my job easier.)
 
 Notes and hints
 ---------------

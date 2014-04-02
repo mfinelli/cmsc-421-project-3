@@ -72,3 +72,7 @@
   [state actions]
   (eval (concat `(-> ~state) actions)))
 
+(defn find-plan
+  "Finds a plan from start-pos to goal."
+  [start-pos goal]
+  nil)
