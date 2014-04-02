@@ -24,7 +24,7 @@ The value of :pos is also a map from blocks to the block they are stacked on.
     ;; :a is on :b, :b is on :c, :c is on the :table, etc...
     {:a :b, :b :c, :c :table, :d :e, :e :table}
 
-(Note that :table, and nil are NOT valid blocks.)
+(Note that :table, false and nil are NOT valid blocks.)
 
 Goals and operators
 -------------------
@@ -54,7 +54,7 @@ preconditions is an illegal action.
 
 These planning operators are the only legal way to update the state of the
 world. (i.e. you are not allowed to apply your own operators that modify the 
-:pos map, and yes, the release tests will check this)
+:pos map)
 
 Plans
 -----
@@ -75,10 +75,10 @@ result in a state that satisfies the goal. e.g.
     user=> (apply-plan start plan)
     {:pos {:a :table, :c :b, :b :table}, :holding nil, :clear #{:a :c}}
     
-    user=> (goal-reached? (apply-plan start plan) goal)
+    user=> (reached-goal? (apply-plan start plan) goal)
     true
 
-    user=> (goal-reached? (apply-plan start bad-plan) goal)
+    user=> (reached-goal? (apply-plan start bad-plan) goal)
     false
 
 Note that the normal invocation of an operator is:
@@ -98,7 +98,7 @@ operators) such that:
 
     (let [start (init start-pos)
           some-plan (find-plan start goal)]
-      (goal-reached (apply-plan start some-plan) goal)
+      (reached-goal? (apply-plan start some-plan) goal)
 
 is true. i.e. find-plan should return a plan that reaches the goal. Note that
 find-plan is being passed an initial position map, not an entire state. (i.e.
@@ -116,7 +116,7 @@ that limit. No points for find-plan's that time-out or blow out the JVM's
 memory (per release test, i.e. if your find-plan times-out on only one test, 
 then you only lose the points for that test).
 
-A note on memory: an datastructure bound to a var via (def) will *not* be 
+A note on memory: an data structure bound to a var via (def) will *not* be 
 garbage collected, unless that var is rebound using another def. Don't
 use (def) for local vars; that's what (let) is for (garbage can be collected
 immediately after the let goes out of scope).
@@ -125,24 +125,37 @@ Submission
 ----------
 
 Name your file lastname_firstname_project3.clj and submit it (and only it)
-to the submit server. (And don't wrap it in folder; makes my job easier.)
+to the submit server. (And don't wrap it in a folder; makes my job easier.)
 
 Notes and hints
 ---------------
 
-Breadth-first search is prohibitively expensive. Really. You are likely going to
-need some kind of search heuristic. Since optimality is not required, this
-heuristic doesn't need to be admissible.
+Breadth-first search is generally prohibitively expensive for these types of
+problems. You are likely going to need some kind of search heuristic. Since
+optimality is not required, this heuristic doesn't need to be admissible.
 
-You will probably want helper functions that generate the next set of legal
+Naive depth-first search can result in an infinite loop (e.g. pickup :a, puton
+:table, pickup :a, puton :table, etc...). Design your find-plan function
+accordingly.
+
+You will probably want helper function(s) that generate the next set of legal
 moves. The logic for determining if a state satisfies the necessary
-preconditions is embedded into the definitions of pickup and puton.
+preconditions is embedded into the definitions of pickup and puton - it should
+be straightforward to adapt this to your needs.
 
 Clojure's data structures are all persistent! When you apply an operator, it
 returns the state resulting from performing that action, but if you've kept
 a reference to the original state, you get to keep it for free. Use this to
 your advantage.
 
-*Test* your program. We will provide some initial states and goals (that we'd
+You may use functions in core.logic in your find-plan code. But exercise
+caution, poorly written relations can take a very long time to execute.
+
+**Test your program.** We will provide some initial states and goals (that we'd
 expect your find-plan to be able to solve). You should write more of your own.
 
+**In particular, make sure your code will run as submitted.** (i.e. before you
+submit, close the REPL, restart it and reload your code). Clojure requires
+functions be defined before they can be referenced which led to some problems
+in previous projects. If you submit code that does not run, you will receive
+no points on this project.

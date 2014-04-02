@@ -1,14 +1,15 @@
 ;; Your Name
 ;; Your User ID (what you use to log into submit.cs.umd.edu)
 
-;; Sample configuration:
+;; Sample configuration in blocks world:
 ;; 
 ;;  :a 
 ;;  :b :d
 ;;  :c :e
 ;; :table
 ;; 
-;; (def sample {:a :b, :b :c, :c :table, :d :e, :e :table})
+;; (def initial-pos {:a :b, :b :c, :c :table, :d :e, :e :table})
+;; (def initial-state (init initial-pos))
 
 (defn init
   "Returns an appropriate initial state as specified by pos.
@@ -72,7 +73,47 @@
   [state actions]
   (eval (concat `(-> ~state) actions)))
 
+;;;; Your assignment: ;;;;
+
 (defn find-plan
-  "Finds a plan from start-pos to goal."
+  "Finds a plan from start-pos to goal.
+   TODO: Write this function!"
   [start-pos goal]
   nil)
+
+;;;; TESTS ;;;;
+
+;;; Write your own tests. Tests are good!
+;;; (I've included tests directly in this file in the hopes that more people
+;;; will use them on this project.)
+
+(def tall {:a :b, :b :c, :c :d, :d :e,
+           :e :f, :f :g, :g :h, :h :i, :i :table})
+
+(def tri {:a :b, :b :c, :c :table, :d :e, :e :f, :f :table}) 
+
+(def goal-small {:c :a, :a :b, :b :table})
+
+(def goal-large {:c :a, :a :b, :b :e, :e :table, :d :f, :f :table})
+
+(defn test-find-plan
+  "True if the plan from find-plan succesfully reaches the goal."
+  [start-pos goal]
+  (reached-goal? (apply-plan (init start-pos) (find-plan start-pos goal))
+                 goal))
+
+(defn run-tests []
+  (do
+    (println "Running tests...")
+    (println (test-find-plan tall goal-small)
+             (test-find-plan tall goal-large)
+             (test-find-plan tri goal-small)
+             (test-find-plan tri goal-large))))
+
+;; user=> (time (run-tests))
+;; Running tests...
+;; true true true true
+;; "Elapsed time: 59.365189 msecs"
+;; nil
+;;
+
