@@ -44,7 +44,7 @@
 
 (defn puton
   "Returns state resulting from putting currently held block on target.
-   Returns nil if putdown is an illegal action.
+   Returns nil if puton is an illegal action.
    Preconditions: arm is holding block, target is :table or clear.
    Postconditions: arm is empty, target is not clear, block is clear,
                    block is on top of target."
@@ -73,7 +73,7 @@
   [state actions]
   (eval (concat `(-> ~state) actions)))
 
-;;;; Your assignment: ;;;;
+;;;;;;;;
 
 (defn find-plan
   "Finds a plan from start-pos to goal.
@@ -85,7 +85,7 @@
 
 ;;; Write your own tests. Tests are good!
 ;;; (I've included tests directly in this file in the hopes that more people
-;;; will use them on this project.)
+;;; will use them for this project.)
 
 (def tall {:a :b, :b :c, :c :d, :d :e,
            :e :f, :f :g, :g :h, :h :i, :i :table})

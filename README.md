@@ -96,27 +96,27 @@ Assignment
 Write the function (find-plan start-pos goal) that returns a plan (i.e. vector or
 list of operators) such that:
 
-    (let [start (init start-pos)
-          some-plan (find-plan start goal)]
+    (let [some-plan (find-plan start-pos goal)
+          start (init start-pos)]
       (reached-goal? (apply-plan start some-plan) goal)
 
 is true. i.e. find-plan should return a plan that reaches the goal. Note that
-find-plan is being passed an initial position map, not an entire state. (i.e.
-just the :pos part of a state)
+find-plan is being passed an initial position map, not an entire state (just
+the :pos part of a state)
 
 We do *not* require that the plan returned be *optimal* (i.e. as short as
 possible), but it should be within an order of magnitude or so.
 As a rule of thumb, don't worry too much about optimizing plan length; your
 primary concern should be in making sure that the plan is correct.
 
-*If your (find-plan) takes longer than 30 seconds to run, the release tests
-will time-out.* (For reference, I'm running these on an Intel i7 @ 2.30 GHz.)
+**If your (find-plan) takes longer than 30 seconds to run, the release tests
+will time-out.** (For reference, I'm running these on an Intel i7 @ 2.30 GHz.)
 Therefore, when testing, make sure your (find-plan) terminates *well* within
 that limit. No points for find-plan's that time-out or blow out the JVM's 
 memory (per release test, i.e. if your find-plan times-out on only one test, 
 then you only lose the points for that test).
 
-A note on memory: an data structure bound to a var via (def) will *not* be 
+A note on memory: a data structure bound to a var via (def) will *not* be 
 garbage collected, unless that var is rebound using another def. Don't
 use (def) for local vars; that's what (let) is for (garbage can be collected
 immediately after the let goes out of scope).
@@ -148,7 +148,7 @@ returns the state resulting from performing that action, but if you've kept
 a reference to the original state, you get to keep it for free. Use this to
 your advantage.
 
-You may use functions in core.logic in your find-plan code. But exercise
+You may use functions from core.logic in your find-plan code. But exercise
 caution, carelessly written relations can take a very long time to execute.
 
 **Test your program.** We will provide some initial states and goals (that we'd
