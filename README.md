@@ -93,8 +93,8 @@ http://clojuredocs.org/clojure_core/clojure.core/-%3E
 Assignment
 ----------
 
-Write the function (find-plan start-pos goal) that returns a plan (i.e. vector of
-operators) such that:
+Write the function (find-plan start-pos goal) that returns a plan (i.e. vector or
+list of operators) such that:
 
     (let [start (init start-pos)
           some-plan (find-plan start goal)]
@@ -149,10 +149,13 @@ a reference to the original state, you get to keep it for free. Use this to
 your advantage.
 
 You may use functions in core.logic in your find-plan code. But exercise
-caution, poorly written relations can take a very long time to execute.
+caution, carelessly written relations can take a very long time to execute.
 
 **Test your program.** We will provide some initial states and goals (that we'd
 expect your find-plan to be able to solve). You should write more of your own.
+
+(Note that we will not ever test your program on an invalid goal, e.g. a block
+stacked on itself. You do not have to check for these cases.)
 
 **In particular, make sure your code will run as submitted.** (i.e. before you
 submit, close the REPL, restart it and reload your code). Clojure requires
