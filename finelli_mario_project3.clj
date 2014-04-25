@@ -1,5 +1,6 @@
-;; Your Name
-;; Your User ID (what you use to log into submit.cs.umd.edu)
+;; Mario Finelli (mfinelli)
+;; CMSC 421 - Section 0201
+;; Project 3 (due 6 May 2014)
 
 ;; Sample configuration in blocks world:
 ;; 
