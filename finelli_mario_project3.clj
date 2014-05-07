@@ -82,6 +82,18 @@
   [start-pos goal]
   nil)
 
+(defn table
+  "Returns a vector of blocks that are on the table from a given postion map."
+  [pos]
+  (vec
+    (remove nil?
+      (map
+        (fn [block]
+          (if (= (block pos) :table)
+            block))
+        (keys pos)))))
+
+
 ;;;; TESTS ;;;;
 
 ;;; Write your own tests. Tests are good!
