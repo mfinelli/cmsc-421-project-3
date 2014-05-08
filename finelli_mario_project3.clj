@@ -81,6 +81,12 @@
   [s e]
   (some #(= e %) s))
 
+(defn remove-all
+  "Removes every element in a from b.
+   https://stackoverflow.com/a/1511428"
+  [a b]
+  (remove (set a) b))
+
 (defn table
   "Returns a vector of blocks that are on the table from a given postion map."
   [pos]
