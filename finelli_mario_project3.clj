@@ -119,6 +119,33 @@
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state newstate})))))
 
+(defn in?
+  "Returns true if the sequence s contains the element e.
+   https://stackoverflow.com/a/3249777"
+  [s e]
+  (some #(= e %) s))
+
+(defn build
+  "Given blocks out of place and in place and end goal and a current state
+   return the steps needed to build the solution."
+  [in-place out-of-place goal state]
+  (if (= (count out-of-place) 0)
+    {:plan [], :state state}
+    (let [move (remove nil?
+                 (for [block out-of-place]
+                   (if (in? in-place (block goal))
+                     block)))
+          plan (reduce into
+                  (for [block move]
+                    [`(pickup ~block) `(puton ~(block goal))]))
+          new-state (apply-plan state plan)
+          new-in-place (vec (reduce conj move in-place))
+          new-out-of-place (vec (remove (set move) out-of-place))]
+      (let [nxt (build new-in-place new-out-of-place goal new-state)]
+        (if (> (count (:plan nxt)) 0)
+          {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
+          {:plan plan, :state new-state})))))
+
 ;;;; TESTS ;;;;
 
 ;;; Write your own tests. Tests are good!
