@@ -92,11 +92,11 @@
   [pos]
   (vec
     (remove nil?
-      (map
-        (fn [block]
-          (if (= (block pos) :table)
-            block))
-        (keys pos)))))
+            (map
+              (fn [block]
+                (if (= (block pos) :table)
+                  block))
+              (keys pos)))))
 ;; this works by taking all of the keys in the position map -- that is every
 ;; block (separated from what it is sitting on be that the table or another
 ;; block. -> (map fn (keys pos))
@@ -111,8 +111,8 @@
    based on a given state"
   [state]
   (vec
-    (remove
-      (set (on-table (:pos state)))
+    (remove-all
+      (on-table (:pos state))
       (:clear state))))
 ;; here we want to remove all of the blocks that are already on the table from
 ;; the set of clear blocks -- those that are free to be moved.
@@ -124,11 +124,11 @@
   "Given a state returns a plan for moving all blocks onto the table and a new
    state from the resulting moves."
   [state]
-  (if (= (count (put-on-table state)) 0)
+  (if (zero? (count (put-on-table state)))
     {:plan [], :state state}
     (let [plan (reduce into
-                 (for [block (put-on-table state)]
-                   [`(pickup ~block) `(puton :table)]))
+                       (for [block (put-on-table state)]
+                         [`(pickup ~block) `(puton :table)]))
           new-state (apply-plan state plan)]
       (let [nxt (unstack new-state)]
         (if (> (count (:plan nxt)) 0)
@@ -152,17 +152,17 @@
   "Given blocks out of place and in place and end goal and a current state
    return the steps needed to build the solution."
   [in-place out-of-place goal state]
-  (if (= (count out-of-place) 0)
+  (if (zero? (count out-of-place))
     {:plan [], :state state}
     (let [move (remove nil?
-                 (for [block out-of-place]
-                   (if (in? in-place (block goal))
-                     block)))
+                       (for [block out-of-place]
+                         (if (in? in-place (block goal))
+                           block)))
           plan (if (zero? (count move))
                  []
                  (vec (reduce into
-                  (for [block move]
-                    [`(pickup ~block) `(puton ~(block goal))]))))
+                              (for [block move]
+                                [`(pickup ~block) `(puton ~(block goal))]))))
           new-state (apply-plan state plan)
           new-in-place (if (zero? (count move))
                          (vec
@@ -203,7 +203,7 @@
    then reconstructing the goal state as we want it."
   [start-pos goal]
     (let [start-state (init start-pos)]
-      (if (= (reached-goal? (init start-pos) goal) true)
+      (if (reached-goal? (init start-pos) goal)
         [] ;; if we've got the goal state return an empty plan
         (let [setup (unstack start-state)
               out-of-place (vec (keys (apply dissoc goal (on-table goal))))
