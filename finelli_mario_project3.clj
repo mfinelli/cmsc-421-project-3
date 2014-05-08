@@ -164,7 +164,14 @@
                   (for [block move]
                     [`(pickup ~block) `(puton ~(block goal))]))))
           new-state (apply-plan state plan)
-          new-in-place (vec (reduce conj move in-place))
+          new-in-place (if (zero? (count move))
+                         (vec 
+                           (remove-all out-of-place 
+                                       (distinct 
+                                         (reduce conj 
+                                                 (vals goal) 
+                                                 (keys goal)))))
+                         (vec (reduce conj move in-place)))
           new-out-of-place (vec (remove (set move) out-of-place))]
       (let [nxt (stack new-in-place new-out-of-place goal new-state)]
         (if (> (count (:plan nxt)) 0)
@@ -181,6 +188,11 @@
 ;; the goal.
 ;; then we get the new state on which we'll recurse and add the blocks we moved
 ;; to the in-place array and remove them from the out of place array.
+;; if we had no moves then it means that we have blocks that satisfy their
+;; goal even when not sitting on the table. to fix an infinite loop we get all
+;; of the blocks (distinct (reduce conj (vals goal) (keys goal))) and remove
+;; the ones that are out of place and what is left we know is in place. mark
+;; these blocks as in place and recurse.
 ;; then do the "look-ahead" and if we get the empty plan then return our plan
 ;; and updated state, otherwise combine the plan from recursing with our
 ;; current plan and return that.
