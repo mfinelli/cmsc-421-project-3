@@ -3,12 +3,12 @@
 ;; Project 3 (due 8 May 2014)
 
 ;; Sample configuration in blocks world:
-;; 
-;;  :a 
+;;
+;;  :a
 ;;  :b :d
 ;;  :c :e
 ;; :table
-;; 
+;;
 ;; (def initial-pos {:a :b, :b :c, :c :table, :d :e, :e :table})
 ;; (def initial-state (init initial-pos))
 
@@ -32,7 +32,7 @@
   [state block]
   (cond (:holding state) nil
         (not ((:clear state) block)) nil
-        :else 
+        :else
           (let [holding block
                 pos (assoc (:pos state) block nil)
                 block-below ((:pos state) block)
@@ -59,7 +59,7 @@
                 clear (-> (:clear state) (disj target) (conj block))]
 
             {:pos pos, :holding holding, :clear clear})))
-  
+
 
 (defn reached-goal?
   "Returns true iff state satsifies goal."
@@ -128,7 +128,7 @@
 (def tall {:a :b, :b :c, :c :d, :d :e,
            :e :f, :f :g, :g :h, :h :i, :i :table})
 
-(def tri {:a :b, :b :c, :c :table, :d :e, :e :f, :f :table}) 
+(def tri {:a :b, :b :c, :c :table, :d :e, :e :f, :f :table})
 
 (def goal-small {:c :a, :a :b, :b :table})
 
