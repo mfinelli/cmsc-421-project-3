@@ -228,9 +228,25 @@
 
 (def tri {:a :b, :b :c, :c :table, :d :e, :e :f, :f :table})
 
+(def huge {:a :b, :b :table, :c :a, :d :table, :e :table, :f :g, :g :h,
+           :h :i, :i :j, :j :table, :k :m, :m :l, :l :table, :n :o, :o :p,
+           :p :q, :q :r, :r :table, :s :table, :t :table, :u :table, :v :u,
+           :w :v, :x :w, :y :x, :z :table})
+
+(def all-on-table {:a :table, :b :table, :c :table})
+
 (def goal-small {:c :a, :a :b, :b :table})
 
 (def goal-large {:c :a, :a :b, :b :e, :e :table, :d :f, :f :table})
+
+(def goal-not-on-table {:c :b, :b :a, :e :f})
+
+(def goal-half-not-on-table {:c :b, :b :a, :a :table, :d :e, :e :f, :g :h,
+                             :i :table})
+
+(def goal-stairs {:a :table, :b :c, :c :table, :d :e, :e :f, :f :table, :g :h,
+                  :h :i, :i :j, :j :table, :k :l, :l :m, :m :n, :n :o,
+                  :o :table, :p :q, :q :r, :r :s, :s :t, :t :u, :u :table})
 
 (defn test-find-plan
   "True if the plan from find-plan succesfully reaches the goal."
@@ -244,7 +260,11 @@
     (println (test-find-plan tall goal-small)
              (test-find-plan tall goal-large)
              (test-find-plan tri goal-small)
-             (test-find-plan tri goal-large))))
+             (test-find-plan tri goal-large)
+             (test-find-plan all-on-table goal-small)
+             (test-find-plan tall goal-not-on-table)
+             (test-find-plan huge goal-stairs)
+             (test-find-plan tall goal-half-not-on-table))))
 
 ;; user=> (time (run-tests))
 ;; Running tests...
