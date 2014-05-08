@@ -93,6 +93,14 @@
             block))
         (keys pos)))))
 
+(defn put-on-table
+  "Returns a vector of blocks that should be picked up and put on the table
+   based on a given state"
+  [state]
+  (vec
+    (remove
+      (set (table (:pos state)))
+      (:clear state))))
 
 ;;;; TESTS ;;;;
 
