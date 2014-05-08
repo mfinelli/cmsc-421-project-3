@@ -149,7 +149,7 @@
               out-of-place (vec (keys (apply dissoc goal (table goal))))
               in-place (table goal)
               build (build in-place out-of-place goal (:state setup))
-              plan (conj (:plan setup) (:plan build))]
+              plan (reduce conj (:plan setup) (:plan build))]
           plan))))
 
 ;;;; TESTS ;;;;
