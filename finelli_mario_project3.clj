@@ -60,7 +60,6 @@
 
             {:pos pos, :holding holding, :clear clear})))
 
-
 (defn reached-goal?
   "Returns true iff state satsifies goal."
   [state goal]
