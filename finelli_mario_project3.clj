@@ -97,6 +97,14 @@
           (if (= (block pos) :table)
             block))
         (keys pos)))))
+;; this works by taking all of the keys in the position map -- that is every
+;; block (separated from what it is sitting on be that the table or another
+;; block. -> (map fn (keys pos))
+;; then we use the anonymous function that takes each block and checks if it's
+;; on the table and if it it returns it. -> (block pos) returns the block or
+;; table that block is sitting on.
+;; if it isn't on the table then it'll return null and we want to remove those
+;; then return a vector. -> (vec (remove nil? *results from anon. function*))
 
 (defn put-on-table
   "Returns a vector of blocks that should be picked up and put on the table
@@ -106,6 +114,11 @@
     (remove
       (set (table (:pos state)))
       (:clear state))))
+;; here we want to remove all of the blocks that are already on the table from
+;; the set of clear blocks -- those that are free to be moved.
+;; this gives us a set of blocks that aren't already on the table and don't
+;; have any blocks on top of them which means we can safely put them on the 
+;; table.
 
 (defn plan-blocks-on-table
   "Given a state returns a plan for moving all blocks onto the table and a new
@@ -121,6 +134,19 @@
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state newstate})))))
+;; since this is a recursive function first thing we want to do is check if 
+;; we have no more blocks to put on the table since this will be what we check
+;; for when deciding whether to recurse or not. if we don't have any more
+;; blocks to move then return an empty plan.
+;; now our plan consists of taking each block not already on the table and
+;; picking it up and putting it on the table. the for loop takes each block 
+;; free to move to the table and saves the actions pickup and puton. the 
+;; results from that loop are then reduced into a single vector.
+;; then we take that partial plan and apply it to the state. Then we do a
+;; "look-ahead" (recurse) on the new state that we got after applying the plan.
+;; if there are no more blocks to move (as explained above) then we return our
+;; plan and the resulting state. otherwise we need add the results of the
+;; look-ahead to out plan and update the state and return that.
 
 (defn build
   "Given blocks out of place and in place and end goal and a current state
@@ -142,6 +168,20 @@
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state new-state})))))
+;; this is very similiar to the function that unstacks the blocks but here the
+;; criteria for recursing is if we have any blocks that are out of place or 
+;; not. (we recurse only if we do have blocks out of place)
+;; to get the blocks that we want to move we loop through the blocks that are
+;; out of place and if the block below them are in place then we can safely
+;; move it into position. 
+;; the plan is created similarly to above only instead of moving the block
+;; onto the table we move it on top of the block that it belongs on to satisfy
+;; the goal.
+;; then we get the new state on which we'll recurse and add the blocks we moved
+;; to the in-place array and remove them from the out of place array.
+;; then do the "look-ahead" and if we get the empty plan then return our plan
+;; and updated state, otherwise combine the plan from recursing with our 
+;; current plan and return that.
 
 (defn find-plan
   "Finds a plan from start-pos to goal.
@@ -157,6 +197,11 @@
               build (build in-place out-of-place goal (:state setup))
               plan (reduce conj (:plan setup) (:plan build))]
           plan))))
+;; if we already have the goal state just return an empty plan. otherwise we
+;; save the plan to unstack the blocks in the variable setup and then calculate
+;; the out of place and in-place blocks and then calculate the steps required
+;; to build the solution starting from all blocks on the table.
+;; then combine the destruct and construct plans and return the entire plan.
 
 ;;;; TESTS ;;;;
 
