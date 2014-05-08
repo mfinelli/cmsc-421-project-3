@@ -78,11 +78,18 @@
 
 (defn find-plan
   "Finds a plan from start-pos to goal.
-   TODO: Write this function!
    We'll accomplish this by first putting all of the blocks on the table and
    then reconstructing the goal state as we want it."
   [start-pos goal]
-  nil)
+    (let [start-state (init start-pos)]
+      (if (= (reached-goal? (init start-pos) goal) true)
+        [] ;; if we've got the goal state return an empty plan
+        (let [setup (plan-blocks-on-table start-state)
+              out-of-place (vec (keys (apply dissoc goal (table goal))))
+              in-place (table goal)
+              build (build in-place out-of-place goal (:state setup))
+              plan (conj (:plan setup) (:plan build))]
+          plan))))
 
 (defn table
   "Returns a vector of blocks that are on the table from a given postion map."
