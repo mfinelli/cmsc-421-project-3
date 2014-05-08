@@ -87,7 +87,7 @@
   [a b]
   (remove (set a) b))
 
-(defn table
+(defn on-table
   "Returns a vector of blocks that are on the table from a given postion map."
   [pos]
   (vec
@@ -112,7 +112,7 @@
   [state]
   (vec
     (remove
-      (set (table (:pos state)))
+      (set (on-table (:pos state)))
       (:clear state))))
 ;; here we want to remove all of the blocks that are already on the table from
 ;; the set of clear blocks -- those that are free to be moved.
@@ -120,7 +120,7 @@
 ;; have any blocks on top of them which means we can safely put them on the
 ;; table.
 
-(defn plan-blocks-on-table
+(defn unstack
   "Given a state returns a plan for moving all blocks onto the table and a new
    state from the resulting moves."
   [state]
@@ -129,11 +129,11 @@
     (let [plan (reduce into
                  (for [block (put-on-table state)]
                    [`(pickup ~block) `(puton :table)]))
-          newstate (apply-plan state plan)]
-      (let [nxt (plan-blocks-on-table newstate)]
+          new-state (apply-plan state plan)]
+      (let [nxt (unstack new-state)]
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
-          {:plan plan, :state newstate})))))
+          {:plan plan, :state new-state})))))
 ;; since this is a recursive function first thing we want to do is check if
 ;; we have no more blocks to put on the table since this will be what we check
 ;; for when deciding whether to recurse or not. if we don't have any more
@@ -148,7 +148,7 @@
 ;; plan and the resulting state. otherwise we need add the results of the
 ;; look-ahead to out plan and update the state and return that.
 
-(defn build
+(defn stack
   "Given blocks out of place and in place and end goal and a current state
    return the steps needed to build the solution."
   [in-place out-of-place goal state]
@@ -164,7 +164,7 @@
           new-state (apply-plan state plan)
           new-in-place (vec (reduce conj move in-place))
           new-out-of-place (vec (remove (set move) out-of-place))]
-      (let [nxt (build new-in-place new-out-of-place goal new-state)]
+      (let [nxt (stack new-in-place new-out-of-place goal new-state)]
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state new-state})))))
@@ -191,10 +191,10 @@
     (let [start-state (init start-pos)]
       (if (= (reached-goal? (init start-pos) goal) true)
         [] ;; if we've got the goal state return an empty plan
-        (let [setup (plan-blocks-on-table start-state)
-              out-of-place (vec (keys (apply dissoc goal (table goal))))
-              in-place (table goal)
-              build (build in-place out-of-place goal (:state setup))
+        (let [setup (unstack start-state)
+              out-of-place (vec (keys (apply dissoc goal (on-table goal))))
+              in-place (on-table goal)
+              build (stack in-place out-of-place goal (:state setup))
               plan (reduce conj (:plan setup) (:plan build))]
           plan))))
 ;; if we already have the goal state just return an empty plan. otherwise we
@@ -238,4 +238,3 @@
 ;; "Elapsed time: 59.365189 msecs"
 ;; nil
 ;;
-
