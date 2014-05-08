@@ -104,6 +104,21 @@
       (set (table (:pos state)))
       (:clear state))))
 
+(defn plan-blocks-on-table
+  "Given a state returns a plan for moving all blocks onto the table and a new
+   state from the resulting moves."
+  [state]
+  (if (= (count (put-on-table state)) 0)
+    {:plan [], :state state}
+    (let [plan (reduce into
+                 (for [block (put-on-table state)]
+                   [`(pickup ~block) `(puton :table)]))
+          newstate (apply-plan state plan)]
+      (let [nxt (plan-blocks-on-table newstate)]
+        (if (> (count (:plan nxt)) 0)
+          {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
+          {:plan plan, :state newstate})))))
+
 ;;;; TESTS ;;;;
 
 ;;; Write your own tests. Tests are good!
