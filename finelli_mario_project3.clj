@@ -78,7 +78,9 @@
 
 (defn find-plan
   "Finds a plan from start-pos to goal.
-   TODO: Write this function!"
+   TODO: Write this function!
+   We'll accomplish this by first putting all of the blocks on the table and
+   then reconstructing the goal state as we want it."
   [start-pos goal]
   nil)
 
