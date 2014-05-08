@@ -117,7 +117,7 @@
 ;; here we want to remove all of the blocks that are already on the table from
 ;; the set of clear blocks -- those that are free to be moved.
 ;; this gives us a set of blocks that aren't already on the table and don't
-;; have any blocks on top of them which means we can safely put them on the 
+;; have any blocks on top of them which means we can safely put them on the
 ;; table.
 
 (defn plan-blocks-on-table
@@ -134,13 +134,13 @@
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state newstate})))))
-;; since this is a recursive function first thing we want to do is check if 
+;; since this is a recursive function first thing we want to do is check if
 ;; we have no more blocks to put on the table since this will be what we check
 ;; for when deciding whether to recurse or not. if we don't have any more
 ;; blocks to move then return an empty plan.
 ;; now our plan consists of taking each block not already on the table and
-;; picking it up and putting it on the table. the for loop takes each block 
-;; free to move to the table and saves the actions pickup and puton. the 
+;; picking it up and putting it on the table. the for loop takes each block
+;; free to move to the table and saves the actions pickup and puton. the
 ;; results from that loop are then reduced into a single vector.
 ;; then we take that partial plan and apply it to the state. Then we do a
 ;; "look-ahead" (recurse) on the new state that we got after applying the plan.
@@ -169,18 +169,18 @@
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state new-state})))))
 ;; this is very similiar to the function that unstacks the blocks but here the
-;; criteria for recursing is if we have any blocks that are out of place or 
+;; criteria for recursing is if we have any blocks that are out of place or
 ;; not. (we recurse only if we do have blocks out of place)
 ;; to get the blocks that we want to move we loop through the blocks that are
 ;; out of place and if the block below them are in place then we can safely
-;; move it into position. 
+;; move it into position.
 ;; the plan is created similarly to above only instead of moving the block
 ;; onto the table we move it on top of the block that it belongs on to satisfy
 ;; the goal.
 ;; then we get the new state on which we'll recurse and add the blocks we moved
 ;; to the in-place array and remove them from the out of place array.
 ;; then do the "look-ahead" and if we get the empty plan then return our plan
-;; and updated state, otherwise combine the plan from recursing with our 
+;; and updated state, otherwise combine the plan from recursing with our
 ;; current plan and return that.
 
 (defn find-plan
