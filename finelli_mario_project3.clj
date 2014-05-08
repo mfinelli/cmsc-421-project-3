@@ -75,20 +75,11 @@
 
 ;;;;;;;;
 
-(defn find-plan
-  "Finds a plan from start-pos to goal.
-   We'll accomplish this by first putting all of the blocks on the table and
-   then reconstructing the goal state as we want it."
-  [start-pos goal]
-    (let [start-state (init start-pos)]
-      (if (= (reached-goal? (init start-pos) goal) true)
-        [] ;; if we've got the goal state return an empty plan
-        (let [setup (plan-blocks-on-table start-state)
-              out-of-place (vec (keys (apply dissoc goal (table goal))))
-              in-place (table goal)
-              build (build in-place out-of-place goal (:state setup))
-              plan (conj (:plan setup) (:plan build))]
-          plan))))
+(defn in?
+  "Returns true if the sequence s contains the element e.
+   https://stackoverflow.com/a/3249777"
+  [s e]
+  (some #(= e %) s))
 
 (defn table
   "Returns a vector of blocks that are on the table from a given postion map."
@@ -125,12 +116,6 @@
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state newstate})))))
 
-(defn in?
-  "Returns true if the sequence s contains the element e.
-   https://stackoverflow.com/a/3249777"
-  [s e]
-  (some #(= e %) s))
-
 (defn build
   "Given blocks out of place and in place and end goal and a current state
    return the steps needed to build the solution."
@@ -151,6 +136,21 @@
         (if (> (count (:plan nxt)) 0)
           {:plan (reduce conj plan (:plan nxt)), :state (:state nxt)}
           {:plan plan, :state new-state})))))
+
+(defn find-plan
+  "Finds a plan from start-pos to goal.
+   We'll accomplish this by first putting all of the blocks on the table and
+   then reconstructing the goal state as we want it."
+  [start-pos goal]
+    (let [start-state (init start-pos)]
+      (if (= (reached-goal? (init start-pos) goal) true)
+        [] ;; if we've got the goal state return an empty plan
+        (let [setup (plan-blocks-on-table start-state)
+              out-of-place (vec (keys (apply dissoc goal (table goal))))
+              in-place (table goal)
+              build (build in-place out-of-place goal (:state setup))
+              plan (conj (:plan setup) (:plan build))]
+          plan))))
 
 ;;;; TESTS ;;;;
 
