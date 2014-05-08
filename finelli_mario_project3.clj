@@ -158,9 +158,11 @@
                  (for [block out-of-place]
                    (if (in? in-place (block goal))
                      block)))
-          plan (reduce into
+          plan (if (zero? (count move))
+                 []
+                 (vec (reduce into
                   (for [block move]
-                    [`(pickup ~block) `(puton ~(block goal))]))
+                    [`(pickup ~block) `(puton ~(block goal))]))))
           new-state (apply-plan state plan)
           new-in-place (vec (reduce conj move in-place))
           new-out-of-place (vec (remove (set move) out-of-place))]
