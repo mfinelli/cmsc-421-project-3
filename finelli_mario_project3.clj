@@ -165,11 +165,11 @@
                     [`(pickup ~block) `(puton ~(block goal))]))))
           new-state (apply-plan state plan)
           new-in-place (if (zero? (count move))
-                         (vec 
-                           (remove-all out-of-place 
-                                       (distinct 
-                                         (reduce conj 
-                                                 (vals goal) 
+                         (vec
+                           (remove-all out-of-place
+                                       (distinct
+                                         (reduce conj
+                                                 (vals goal)
                                                  (keys goal)))))
                          (vec (reduce conj move in-place)))
           new-out-of-place (vec (remove (set move) out-of-place))]
